@@ -17,7 +17,7 @@ class BinaryTree:
         '''
         self.root = BinaryTree.Node(root_key, root_value) if root_key is not None else None
         self._size = 0 if self.root is None else 1
-        
+
     def __len__(self) -> int:
         return self._size
 
@@ -25,14 +25,14 @@ class BinaryTree:
         # Todas as chaves devem ter o mesmo tipo, possibilitando a ordenação
         if BinaryTree.KeyType().TYPE and type(key) != BinaryTree.KeyType().TYPE:
             raise KeyError(f"All keys must follow the same type - this tree uses {BinaryTree.KeyType().TYPE}")
-        
+
         if not self.root:
             # definindo o tipo das keys na criação da árvore
             BinaryTree.KeyType().TYPE = type(key)
             self.root = BinaryTree.Node(key, value)
             self._size += 1
             return
-        
+
         pointer = self.root
         while pointer:
             if key < pointer.key:
@@ -52,7 +52,7 @@ class BinaryTree:
             else:
                 pointer.value = value
                 break
-        
+
     def __getitem__(self, key: str) -> any:
         pointer = self.root
         while pointer:
@@ -64,23 +64,22 @@ class BinaryTree:
                 return pointer.value
         raise ValueError(f"{key} not in dict")
 
-    def remove(self, key) -> None:
-        if self._size > 0 and type(key) != BinaryTree.KeyType().TYPE:
-            raise KeyError(f"All keys must follow the same type - this tree uses {BinaryTree.KeyType().TYPE}")
+    # def remove(self, key) -> None:
+    #     if self._size > 0 and type(key) != BinaryTree.KeyType().TYPE:
+    #         raise KeyError(f"All keys must follow the same type - this tree uses {BinaryTree.KeyType().TYPE}")
 
-        def find_min(node: BinaryTree.Node) -> BinaryTree.Node:
-            curr = node
-            while curr._left:
-                curr = curr._left
-            return curr
+    #     def find_min(node: BinaryTree.Node) -> BinaryTree.Node:
+    #         curr = node
+    #         while curr._left:
+    #             curr = curr._left
+    #         return curr
         
-        def remove_node(node: BinaryTree.Node, key) -> BinaryTree.Node:
-            if not node:
-                raise ValueError("Item not found")
-            if key < node.key:
-                node._left = remove_node(node._left, key)
-            elif
-
+    #     def remove_node(node: BinaryTree.Node, key) -> BinaryTree.Node:
+    #         if not node:
+    #             raise ValueError("Item not found")
+    #         if key < node.key:
+    #             node._left = remove_node(node._left, key)
+    #         elif
 
     #     def remove_node(node, key):
     #         if node is None:
