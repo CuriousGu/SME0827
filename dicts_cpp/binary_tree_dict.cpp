@@ -21,6 +21,41 @@ class BinaryTreeDict{
         Node* root;
         unsigned int _size = 0;
 
+        Node* min(Node* node){
+            Node* curr = node;
+            while(curr->left != nullptr){
+                curr = curr->left;
+            }
+            return curr;
+        }
+
+        Node* remove_node(Node* node, string key){
+            if(!(node)){
+                return node;
+            }
+
+            if(key < node->key){
+                node->left = remove_node(node->left, key);
+            }
+            else if(key > node->key){
+                node->right = remove_node(node->right, key);
+            }
+            else{
+                if(!(node->left)){
+                    return node->right;
+                }
+                else if(!(node->right)){
+                    return node->left;
+                }
+                Node* temp = min(node->right);
+                node->key = temp->key;
+                node->value = temp->value;
+                node->right = remove_node(node->right, temp->key);
+            }
+            return node;
+        }
+
+
     public:
         BinaryTreeDict() : root(nullptr) {}
 
@@ -69,19 +104,9 @@ class BinaryTreeDict{
         string& operator[](const string& key) {
             return insert(root, key);
         }
+
+        void remove(string key){
+            root = remove_node(root, key);
+        }
+    
     };
-
-
-
-
-
-// int main(){
-//     BinaryTreeDict a;
-
-//     a["primeiro"] = "gustavo";
-//     a["primeiro"] = "fernanda";
-
-//     cout << a["primeiro"] << endl;
-
-//     return 0;
-// }
