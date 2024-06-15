@@ -23,7 +23,7 @@ class BinaryTree:
 
     def __setitem__(self, key: str, value: any) -> None:
         # Todas as chaves devem ter o mesmo tipo, possibilitando a ordenação
-        if BinaryTree.KeyType().TYPE and type(key) != BinaryTree.KeyType().TYPE:
+        if BinaryTree.KeyType().TYPE and type(key) is not BinaryTree.KeyType().TYPE:
             raise KeyError(f"All keys must follow the same type - this tree uses {BinaryTree.KeyType().TYPE}")
 
         if not self.root:
@@ -47,7 +47,7 @@ class BinaryTree:
                     pointer = pointer._right
                 else:
                     pointer._right = BinaryTree.Node(key, value)
-                    self.__size += 1
+                    self._size += 1
                     break
             else:
                 pointer.value = value
@@ -64,43 +64,32 @@ class BinaryTree:
                 return pointer.value
         raise ValueError(f"{key} not in dict")
 
-    # def remove(self, key) -> None:
-    #     if self._size > 0 and type(key) != BinaryTree.KeyType().TYPE:
-    #         raise KeyError(f"All keys must follow the same type - this tree uses {BinaryTree.KeyType().TYPE}")
+    def min(self, node):
+        current = node
+        while current.left is not None:
+            current = current.left
+        return current
 
-    #     def find_min(node: BinaryTree.Node) -> BinaryTree.Node:
-    #         curr = node
-    #         while curr._left:
-    #             curr = curr._left
-    #         return curr
-        
-    #     def remove_node(node: BinaryTree.Node, key) -> BinaryTree.Node:
-    #         if not node:
-    #             raise ValueError("Item not found")
-    #         if key < node.key:
-    #             node._left = remove_node(node._left, key)
-    #         elif
+    def _remove(self, node, key):
+        if node is None:
+            return node
 
-    #     def remove_node(node, key):
-    #         if node is None:
-    #             raise ValueError("Item not found in the tree")
-    #         if key < node.key:
-    #             node._left = remove_node(node._left, key)
-    #         elif key > node.key:
-    #             node._right = remove_node(node._right, key)
-    #         else:
-    #             if node._left is None:
-    #                 return node._right
-    #             elif node._right is None:
-    #                 return node._left
+        if key < node.key:
+            node.left = self._remove(node.left, key)
+        elif key > node.key:
+            node.right = self._remove(node.right, key)
+        else:
+            if node.left is None:
+                return node.right
+            elif node.right is None:
+                return node.left
 
-    #             temp = find_min(node._right)
-    #             node.key = temp.key
-    #             node.value = temp.value
-    #             node._right = remove_node(node._right, temp.key)
-    #         return node
+            temp = self._min(node.right)
+            node.key = temp.key
+            node.value = temp.value
+            node.right = self._remove(node.right, temp.key)
 
-    #     if self.root is None:
-    #         raise ValueError("Empty Tree")
-    #     self.root = remove_node(self.root, key)
-    #     self.__size = self.__size - 1 if self.__size > 0 else 0
+        return node
+
+    def remove(self, key):
+        self.root = self._remove(self.root, key)
