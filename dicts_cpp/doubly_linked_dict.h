@@ -1,3 +1,6 @@
+#ifndef DOUBLY_LINKED_H
+#define DOUBLY_LINKED_H
+
 #include <string>
 #include <iostream>
 
@@ -104,3 +107,5 @@ class DoublyLinked{
             }
         }
 };
+
+#endif // DOUBLY_LINKED_H
