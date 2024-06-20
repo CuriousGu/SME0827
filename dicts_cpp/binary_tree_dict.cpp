@@ -4,7 +4,7 @@
 using namespace std;
 
 
-class BinaryTreeDict{
+class BinaryTree{
 
     private:
         class Node{
@@ -23,41 +23,45 @@ class BinaryTreeDict{
 
         Node* min(Node* node){
             Node* curr = node;
-            while(curr->left != nullptr){
+            while(curr && curr->left != nullptr){
                 curr = curr->left;
             }
             return curr;
         }
 
-        Node* remove_node(Node* node, string key){
+        Node* remove(Node* node, string key){
             if(!(node)){
                 return node;
             }
 
             if(key < node->key){
-                node->left = remove_node(node->left, key);
+                node->left = remove(node->left, key);
             }
             else if(key > node->key){
-                node->right = remove_node(node->right, key);
+                node->right = remove(node->right, key);
             }
             else{
-                if(!(node->left)){
-                    return node->right;
+                if(!(node->left) || !(node->right)){
+                    if(node->left){
+                        return node->left;
+                    }
+                    else{
+                        return node->right;
+                    }
                 }
-                else if(!(node->right)){
-                    return node->left;
+                else{
+                    Node* temp = min(node->right);
+                    node->key = temp->key;
+                    node->value = temp->value;
+                    node->right = remove(node->right, temp->key);
                 }
-                Node* temp = min(node->right);
-                node->key = temp->key;
-                node->value = temp->value;
-                node->right = remove_node(node->right, temp->key);
             }
             return node;
         }
 
 
     public:
-        BinaryTreeDict() : root(nullptr) {}
+        BinaryTree() : root(nullptr) {}
 
         unsigned int size(){
             return _size;
@@ -105,8 +109,8 @@ class BinaryTreeDict{
             return insert(root, key);
         }
 
-        void remove(string key){
-            root = remove_node(root, key);
+        void pop(string key){
+            root = remove(root, key);
+            if(_size > 0){_size--;}
         }
-    
     };
