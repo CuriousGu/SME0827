@@ -1,4 +1,4 @@
-class DoublyLinkedList:
+class DoublyLinked:
     class Node:
         def __init__(self, key: any, value: any = None) -> None:
             self.next = None
