@@ -1,13 +1,8 @@
-"""
-PRECISO REVISAR
-"""
-
 class DoublyLinkedList:
-
     class Node:
         def __init__(self, key: any, value: any = None) -> None:
             self.next = None
-            self.previous = None
+            self.prev = None
             self.key = key
             self.value = value
 
@@ -20,111 +15,91 @@ class DoublyLinkedList:
         return self._size
 
     def __setitem__(self, key: any, value: any) -> None:
-        new_node = DoublyLinkedList.Node(key, value)
         if not self.head:
-            self.head = self.tail = new_node
+            self.head = self.tail = self.Node(key, value)
         else:
-            pointer = self.head
-            while pointer:
-                if pointer.key == key:
-                    pointer.value = value
+            current = self.head
+            while current:
+                if current.key == key:
+                    current.value = value
                     return
-                if not pointer.next:
+                if not current.next:
                     break
-                pointer = pointer.next
+                current = current.next
+
+            new_node = self.Node(key, value)
             self.tail.next = new_node
-            new_node.previous = self.tail
+            new_node.prev = self.tail
             self.tail = new_node
         self._size += 1
 
     def __getitem__(self, key: any) -> any:
-        pointer = self.head
-        while pointer:
-            if pointer.key == key:
-                return pointer.value
-            pointer = pointer.next
+        current = self.head
+        while current:
+            if current.key == key:
+                return current.value
+            current = current.next
         raise KeyError(f"Key {key} not found in the list")
 
-    def insert(self, index: int, key: any, value: any) -> None:
-        if index > self._size or index < 0:
-            raise IndexError("list index out of range")
-        pointer = self.head
-        while index > 0:
-            pointer = pointer.next
-            index -= 1
-        new_node = DoublyLinkedList.Node(key, value)
-        new_node.next, new_node.previous = pointer, pointer.previous
-        if pointer.previous:
-            pointer.previous.next = new_node
-        pointer.previous = new_node
-        if pointer == self.head:
-            self.head = new_node
-        self._size += 1
+    def __delitem__(self, key: any) -> None:
+        current = self.head
+        while current:
+            if current.key == key:
+                if current.prev:
+                    current.prev.next = current.next
+                if current.next:
+                    current.next.prev = current.prev
+                if current == self.head:
+                    self.head = current.next
+                if current == self.tail:
+                    self.tail = current.prev
+                self._size -= 1
+                return
+            current = current.next
+        raise KeyError(f"Key {key} not found in the list")
 
     def append(self, key: any, value: any) -> None:
-        new_node = DoublyLinkedList.Node(key, value)
+        new_node = self.Node(key, value)
         if not self.head:
             self.head = self.tail = new_node
         else:
             self.tail.next = new_node
-            new_node.previous = self.tail
+            new_node.prev = self.tail
             self.tail = new_node
         self._size += 1
 
-    def pop(self, index: int = None) -> any:
+    def pop(self, key: any = None) -> any:
         if self._size == 0:
             raise IndexError("pop from empty list")
-
-        if index is None:
-            item = self.tail.key
-            if self.tail.previous:
-                self.tail = self.tail.previous
-                self.tail.next = None
-            else:
-                self.head = self.tail = None
+        if key is None:  # pop last item
+            item = self.tail
+            self.__delitem__(item.key)
+            return item.key, item.value
         else:
-            if index < 0 or index >= self._size:
-                raise IndexError("list index out of range")
-            pointer = self.head
-            while index > 0:
-                pointer = pointer.next
-                index -= 1
-            item = pointer.key
-            if pointer.previous:
-                pointer.previous.next = pointer.next
-            if pointer.next:
-                pointer.next.previous = pointer.previous
-            if pointer == self.head:
-                self.head = pointer.next
-            if pointer == self.tail:
-                self.tail = pointer.previous
-        self._size -= 1
-        return item
+            item = self.head
+            while item:
+                if item.key == key:
+                    self.__delitem__(item.key)
+                    return item.key, item.value
+                item = item.next
+            raise KeyError(f"Key {key} not found in the list")
 
-    def index(self, key: any) -> int:
-        pointer = self.head
-        index = 0
-        while pointer and pointer.key != key:
-            pointer = pointer.next
-            index += 1
-        if pointer and pointer.key == key:
-            return index
-        else:
-            raise ValueError(f"{key} not in the list")
+    def clear(self) -> None:
+        self.head = self.tail = None
+        self._size = 0
 
-    def remove(self, index: int) -> None:
-        if index >= self._size or index < 0:
-            raise IndexError("list index out of range")
-        pointer = self.head
-        while index > 0:
-            pointer = pointer.next
-            index -= 1
-        if pointer.previous:
-            pointer.previous.next = pointer.next
-        if pointer.next:
-            pointer.next.previous = pointer.previous
-        if pointer == self.head:
-            self.head = pointer.next
-        if pointer == self.tail:
-            self.tail = pointer.previous
-        self._size -= 1
+    def keys(self):
+        keys = []
+        current = self.head
+        while current:
+            keys.append(current.key)
+            current = current.next
+        return keys
+
+    def values(self):
+        values = []
+        current = self.head
+        while current:
+            values.append(current.value)
+            current = current.next
+        return values
