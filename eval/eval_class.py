@@ -33,22 +33,30 @@ class EvalDict:
 
         ##### evaluating replacing #####
         execution_time_replacing = []
-        self.dict_full = {f"{i}": i for i in range(self.size)}
         for _ in range(n):
             exec_time = timeit.timeit(self.replacing_test, globals=globals(), number=1)
-            self.test_dict = self.dict_full
+            self.test_dict = {f"{i}": i for i in range(self.size)}
             execution_time_replacing.append(exec_time)
 
         ##### evaluating removing - TOP DOWN #####
         execution_time_poping_top = []
         for _ in range(n):
             exec_time = timeit.timeit(self.removing_test_top_down, globals=globals(), number=1)
-            self.test_dict = self.dict_full
+            self.test_dict = {f"{i}": i for i in range(self.size)}
             execution_time_poping_top.append(exec_time)
 
         ##### evaluating removing - BOTTOM UP #####
         execution_time_poping_bottom = []
         for _ in range(n):
             exec_time = timeit.timeit(self.removing_test_bottom_up, globals=globals(), number=1)
-            self.test_dict = self.dict_full
+            self.test_dict = {f"{i}": i for i in range(self.size)}
             execution_time_poping_bottom.append(exec_time)
+
+        times = {
+                 "insertion": execution_time_insertion, 
+                 "replacing": execution_time_replacing,
+                 "removing_top": execution_time_poping_top,
+                 "removing_bottom": execution_time_poping_bottom
+                 }
+
+        return times
