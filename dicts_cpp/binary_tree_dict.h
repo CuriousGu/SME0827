@@ -1,3 +1,6 @@
+#ifndef BINARY_TREE_H
+#define BINARY_TREE_H
+
 #include <string>
 #include <iostream>
 
@@ -114,3 +117,5 @@ class BinaryTree{
             if(_size > 0){_size--;}
         }
     };
+
+#endif // BINARY_TREE_H
