@@ -1,5 +1,4 @@
 class BinaryTree:
-
     class Node:
         def __init__(self, key: str = None, value: any = None):
             self._left = None
@@ -7,28 +6,20 @@ class BinaryTree:
             self.key = key
             self.value = value
 
-    class KeyType:
-        TYPE = None
-
     def __init__(self, root_key: str = None, root_value: any = None):
-        '''
-        root_key = tree's root key. If NULL, tree will be created empty
-        root_value = value associated with the root key
-        '''
         self.root = BinaryTree.Node(root_key, root_value) if root_key is not None else None
         self._size = 0 if self.root is None else 1
+        self.key_type = type(root_key) if root_key is not None else None
 
     def __len__(self) -> int:
         return self._size
 
     def __setitem__(self, key: str, value: any) -> None:
-        # Todas as chaves devem ter o mesmo tipo, possibilitando a ordenação
-        if BinaryTree.KeyType().TYPE and type(key) is not BinaryTree.KeyType().TYPE:
-            raise KeyError(f"All keys must follow the same type - this tree uses {BinaryTree.KeyType().TYPE}")
+        if self.key_type and not isinstance(key, self.key_type):
+            raise KeyError(f"All keys must be of type {self.key_type.__name__}")
 
         if not self.root:
-            # definindo o tipo das keys na criação da árvore
-            BinaryTree.KeyType().TYPE = type(key)
+            self.key_type = type(key)
             self.root = BinaryTree.Node(key, value)
             self._size += 1
             return
@@ -62,12 +53,12 @@ class BinaryTree:
                 pointer = pointer._left
             else:
                 return pointer.value
-        raise ValueError(f"{key} not in dict")
+        raise KeyError(f"{key} not in dict")
 
-    def min(self, node):
+    def _min(self, node):
         current = node
-        while current.left is not None:
-            current = current.left
+        while current and current._left is not None:
+            current = current._left
         return current
 
     def _remove(self, node, key):
@@ -75,21 +66,20 @@ class BinaryTree:
             return node
 
         if key < node.key:
-            node.left = self._remove(node.left, key)
+            node._left = self._remove(node._left, key)
         elif key > node.key:
-            node.right = self._remove(node.right, key)
+            node._right = self._remove(node._right, key)
         else:
-            if node.left is None:
-                return node.right
-            elif node.right is None:
-                return node.left
-
-            temp = self._min(node.right)
-            node.key = temp.key
-            node.value = temp.value
-            node.right = self._remove(node.right, temp.key)
+            if node._left is None or node._right is None:
+                return node._left if node._left else node._right
+            else:
+                temp = self._min(node._right)
+                node.key = temp.key
+                node.value = temp.value
+                node._right = self._remove(node._right, temp.key)
 
         return node
 
-    def remove(self, key):
+    def pop(self, key):
         self.root = self._remove(self.root, key)
+        self._size -= 1
